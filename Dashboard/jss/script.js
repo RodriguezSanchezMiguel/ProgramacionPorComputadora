@@ -39,7 +39,7 @@ function saveTasks() {
 	}
 }
 
-function renderTasks() {
+function renderTasks(isNew = false) {
 	// Vaciar listas antes de renderizar
 	pendingList.innerHTML = '';
 	completedList.innerHTML = '';
@@ -58,8 +58,8 @@ function renderTasks() {
 		empty.style.opacity = '0.8';
 		pendingList.appendChild(empty);
 	} else {
-		pinnedPending.forEach(task => renderTaskItem(task, pendingList));
-		unpinnedPending.forEach(task => renderTaskItem(task, pendingList));
+		pinnedPending.forEach((task, idx) => renderTaskItem(task, pendingList, isNew && idx === 0));
+		unpinnedPending.forEach((task, idx) => renderTaskItem(task, pendingList, isNew && idx === 0 && pinnedPending.length === 0));
 	}
 
 	// Render completed
@@ -75,9 +75,10 @@ function renderTasks() {
 	updateStats();
 }
 
-function renderTaskItem(task, listEl) {
+function renderTaskItem(task, listEl, isNew = false) {
 	const item = document.createElement('div');
 	item.className = 'task-item';
+	if (isNew) item.classList.add('animate-in');
 	if (task.pinned) item.classList.add('pinned-task');
 
 	const left = document.createElement('div');
@@ -134,12 +135,13 @@ function addTask() {
 	const task = {
 		id: Date.now().toString(),
 		text,
-		completed: false
+		completed: false,
+		pinned: false
 	};
 
 	tasks.unshift(task);
 	saveTasks();
-	renderTasks();
+	renderTasks(true);
 	taskInput.value = '';
 	taskInput.focus();
 }
@@ -176,9 +178,15 @@ function handleTaskAction(e) {
 			renderTasks();
 		}
 	} else if (btn.classList.contains('delete-btn')) {
-		tasks = tasks.filter(t => t.id !== id);
-		saveTasks();
-		renderTasks();
+		const taskItem = btn.closest('.task-item');
+		if (taskItem) {
+			taskItem.classList.add('animate-out');
+			setTimeout(() => {
+				tasks = tasks.filter(t => t.id !== id);
+				saveTasks();
+				renderTasks();
+			}, 300);
+		}
 	}
 }
 

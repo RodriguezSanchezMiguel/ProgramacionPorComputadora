@@ -63,6 +63,37 @@ body {
     line-height: 1.6;
 }
 
+/* Animaciones para tareas */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+.task-item.animate-in {
+    animation: slideInUp 0.3s ease-out;
+}
+
+.task-item.animate-out {
+    animation: slideOutDown 0.3s ease-in forwards;
+}
+
 
 .input, input[type="text"], textarea, select  {
     padding: 10px;
