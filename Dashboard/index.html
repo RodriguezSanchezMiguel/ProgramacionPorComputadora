@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    
+    <header class="header">
+        <center><h1>Dashboard de tareas</h1></center>
+    </header>
+
+    <main class="container">
+        <section class="task-form">
+            <input id="taskinput" type="text" placeholder="Nueva tarea">
+            <button id="addtaskbtn">Agregar</button>
+            <button id="sort-az-btn" class="small-btn">A→Z</button>
+            <button id="sort-za-btn" class="small-btn">Z→A</button>
+        </section>
+
+        <section class="task-stats">
+            <p>Total: <span id="totaltaks">0</span></p>
+            <p>Completadas: <span id="completedtasks">0</span></p>
+            <p>Pendientes: <span id="pendingtasks">0</span></p>
+        </section>
+
+        <section id="pending-tasks" class="task-section">
+            <h2>Tareas Pendientes</h2>
+            <div id="pending-list" class="task-list"></div>
+        </section>
+
+        <section id="completed-tasks" class="task-section">
+            <h2>Tareas Completadas</h2>
+            <div id="completed-list" class="task-list"></div>
+        </section>
+    </main>
+    <script src="jss/script.js"></script>
+
+</body>
+</html>
