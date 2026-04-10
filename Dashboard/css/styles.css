@@ -140,6 +140,20 @@ body {
     background: linear-gradient(90deg,#fc0d0d,#f40606);
 }
 
+.pin-btn {
+    background: linear-gradient(90deg, #9c27b0, #6a1b9a);
+}
+
+.pin-btn.pinned {
+    background: linear-gradient(90deg, #ffc107, #ff9800);
+    font-weight: bold;
+}
+
+.pinned-task {
+    border-left: 4px solid #ffc107;
+    background: rgba(255, 193, 7, 0.08);
+}
+
 .task-stats {
     display: flex;
     gap: 12px;
