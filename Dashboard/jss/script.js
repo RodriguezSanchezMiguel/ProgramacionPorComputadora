@@ -12,6 +12,8 @@ const completedEl = document.getElementById('completedtasks');
 const pendingEl = document.getElementById('pendingtasks');
 
 let tasks = loadTasks();
+let enteringTaskId = null;
+let isDeletingTask = false;
 
 function loadTasks() {
 	try {
@@ -72,6 +74,14 @@ function renderTasks() {
 function renderTaskItem(task, listEl) {
 	const item = document.createElement('div');
 	item.className = 'task-item';
+	item.dataset.id = task.id;
+
+	if (task.id === enteringTaskId) {
+		item.classList.add('entering');
+		item.addEventListener('animationend', () => {
+			item.classList.remove('entering');
+		}, { once: true });
+	}
 
 	const left = document.createElement('div');
 	left.className = 'task-left';
@@ -124,10 +134,26 @@ function addTask() {
 	};
 
 	tasks.unshift(task);
+	enteringTaskId = task.id;
 	saveTasks();
 	renderTasks();
+	enteringTaskId = null;
 	taskInput.value = '';
 	taskInput.focus();
+}
+
+function deleteTaskWithAnimation(id, itemEl) {
+	if (!itemEl || isDeletingTask) return;
+
+	isDeletingTask = true;
+	itemEl.classList.add('removing');
+
+	itemEl.addEventListener('animationend', () => {
+		tasks = tasks.filter(t => t.id !== id);
+		saveTasks();
+		renderTasks();
+		isDeletingTask = false;
+	}, { once: true });
 }
 
 function sortTasks(direction) {
@@ -155,9 +181,8 @@ function handleTaskAction(e) {
 			renderTasks();
 		}
 	} else if (btn.classList.contains('delete-btn')) {
-		tasks = tasks.filter(t => t.id !== id);
-		saveTasks();
-		renderTasks();
+		const taskItem = btn.closest('.task-item');
+		deleteTaskWithAnimation(id, taskItem);
 	}
 }
 
