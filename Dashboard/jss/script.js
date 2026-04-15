@@ -1,5 +1,6 @@
 // script.js - maneja tareas: añadir, borrar, marcar completadas y persistencia en localStorage
 const TASKS_KEY = 'tasks_v1';
+const DELETE_ANIMATION_MS = 920;
 
 const taskInput = document.getElementById('taskinput');
 const addTaskBtn = document.getElementById('addtaskbtn');
@@ -203,8 +204,19 @@ function handleTaskAction(e) {
 			renderTasks();
 		}
 	} else if (btn.classList.contains('delete-btn')) {
-		const taskItem = btn.closest('.task-item');
-		deleteTaskWithAnimation(id, taskItem);
+		const item = btn.closest('.task-item');
+		if (!item || item.classList.contains('deleting')) return;
+
+		item.classList.add('deleting');
+		item.querySelectorAll('button').forEach(button => {
+			button.disabled = true;
+		});
+
+		window.setTimeout(() => {
+			tasks = tasks.filter(t => t.id !== id);
+			saveTasks();
+			renderTasks();
+		}, DELETE_ANIMATION_MS);
 	}
 }
 
