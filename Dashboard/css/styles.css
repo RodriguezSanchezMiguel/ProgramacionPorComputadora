@@ -1,11 +1,79 @@
 
 
+:root {
+    --bg-0: #030712;
+    --bg-1: #071827;
+    --bg-2: #0b2a4b;
+    --panel: rgba(7, 16, 28, 0.78);
+    --panel-strong: rgba(10, 27, 47, 0.92);
+    --text: #edf7ff;
+    --muted: #b7d4ea;
+    --electric: #2dd9ff;
+    --electric-deep: #0f78d1;
+    --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-0), var(--bg-1) 48%, var(--bg-2));
+    font-family: Georgia, serif;
+    line-height: 1.6;
+    color: var(--text);
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    inset: -20vh -20vw;
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(80px);
+    opacity: 0.8;
+}
+
+body::before {
+    background:
+        radial-gradient(circle at 18% 18%, rgba(45, 217, 255, 0.42), transparent 24%),
+        radial-gradient(circle at 82% 20%, rgba(15, 120, 209, 0.38), transparent 22%),
+        radial-gradient(circle at 50% 72%, rgba(0, 180, 255, 0.30), transparent 28%);
+}
+
+body::after {
+    background:
+        radial-gradient(circle at 32% 78%, rgba(45, 217, 255, 0.20), transparent 18%),
+        radial-gradient(circle at 70% 62%, rgba(0, 180, 255, 0.18), transparent 16%),
+        radial-gradient(circle at 50% 50%, rgba(15, 120, 209, 0.10), transparent 34%);
+}
+
+.header {
+    width: 100%;
+    padding: 28px 16px 8px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 18px rgba(45, 217, 255, 0.35), 0 0 28px rgba(15, 120, 209, 0.22);
+}
+
 .container {
     width: 100%;
-    height: 100vh;
+    min-height: calc(100vh - 100px);
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 18px 16px 36px;
 }
 
 .task-form {
@@ -13,11 +81,13 @@
     gap: 12px;
     margin-bottom: 20px;
     width: 360px;
-    background: rgba(255,255,255,0.04);
+    background: var(--panel);
     padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    border-radius: 14px;
+    border: 1px solid rgba(45, 217, 255, 0.22);
+    box-shadow: var(--shadow);
     align-items: center;
+    backdrop-filter: blur(10px);
 }
 
 .task-items {
@@ -41,26 +111,144 @@
 }
 
 .task-section h2 {
-    color: #e8f6f7;
+    color: var(--text);
     font-size: 1.2em;
     margin-bottom: 10px;
     text-align: center;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 14px rgba(45, 217, 255, 0.25);
 }
 
 .task-item {
-    background: rgba(255,255,255,0.06);
+    background: linear-gradient(180deg, rgba(14, 31, 53, 0.92), rgba(8, 20, 34, 0.92));
     padding: 12px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    border-radius: 12px;
+    border: 1px solid rgba(45, 217, 255, 0.22);
+    box-shadow: 0 0 0 1px rgba(15, 120, 209, 0.06), var(--shadow);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
+    overflow: hidden;
 }
 
-body {
-    background: linear-gradient(135deg, #003b42, #0342f0, #060041);
-    font-family: Georgia, sans-serif;
-    line-height: 1.6;
+.task-item:hover {
+    border-color: rgba(45, 217, 255, 0.34);
+    box-shadow:
+        0 0 0 1px rgba(45, 217, 255, 0.14),
+        0 0 22px rgba(45, 217, 255, 0.10),
+        var(--shadow);
+}
+
+.task-item.deleting {
+    animation: taskBurnOut 0.9s ease forwards;
+    pointer-events: none;
+}
+
+.task-item.deleting::before,
+.task-item.deleting::after {
+    content: "";
+    position: absolute;
+    inset: -18% -10% -8%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.task-item.deleting::before {
+    background:
+        radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.60) 7%, rgba(180, 240, 255, 0.92) 13%, rgba(45, 217, 255, 0.92) 20%, rgba(45, 217, 255, 0.56) 30%, rgba(15, 120, 209, 0.20) 44%, transparent 68%),
+        radial-gradient(circle at 28% 100%, rgba(45, 217, 255, 0.96) 0%, rgba(45, 217, 255, 0.50) 14%, transparent 40%),
+        radial-gradient(circle at 72% 100%, rgba(0, 180, 255, 0.96) 0%, rgba(0, 180, 255, 0.50) 14%, transparent 40%),
+        radial-gradient(circle at 42% 72%, rgba(255, 255, 255, 0.28), transparent 22%);
+    filter: blur(2px) saturate(1.35);
+    transform-origin: bottom center;
+    animation: blueFireRise 0.9s ease forwards;
+}
+
+.task-item.deleting::after {
+    background:
+        radial-gradient(circle at 50% 92%, rgba(45, 217, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, rgba(8, 20, 34, 0.1), rgba(6, 15, 28, 0.22) 50%, rgba(2, 7, 12, 0.9) 100%),
+        radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(45, 217, 255, 0.6) 42%, transparent 70%),
+        radial-gradient(circle, rgba(255, 255, 255, 0.82) 0%, rgba(0, 180, 255, 0.5) 42%, transparent 70%),
+        radial-gradient(circle, rgba(255, 255, 255, 0.75) 0%, rgba(45, 217, 255, 0.46) 44%, transparent 72%);
+    background-repeat: no-repeat;
+    background-size: auto, auto, 14px 14px, 11px 11px, 9px 9px;
+    background-position: 50% 92%, 0 0, 66% 66%, 52% 54%, 40% 74%;
+    opacity: 0;
+    animation: blueFireFlash 0.9s ease forwards, emberDrift 0.9s linear forwards;
+}
+
+@keyframes taskBurnOut {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: saturate(1) brightness(1);
+        box-shadow: 0 0 0 1px rgba(45, 217, 255, 0.22), var(--shadow);
+    }
+    25% {
+        transform: scale(1.01) translateX(0);
+        opacity: 1;
+        filter: saturate(1.12) brightness(1.1);
+    }
+    45% {
+        transform: scale(1.015) translateX(-2px);
+        opacity: 1;
+        filter: saturate(1.25) brightness(1.2) contrast(1.1);
+    }
+    62% {
+        transform: scale(0.99) translateX(2px);
+        opacity: 0.78;
+        filter: saturate(0.95) brightness(0.82) contrast(1.15);
+        box-shadow: 0 0 0 1px rgba(45, 217, 255, 0.14), 0 0 18px rgba(45, 217, 255, 0.14), var(--shadow);
+    }
+    82% {
+        transform: scale(0.94) translateY(-2px);
+        opacity: 0.35;
+        filter: saturate(0.55) brightness(0.45) contrast(1.25);
+    }
+    100% {
+        transform: scale(0.84) translateY(-6px);
+        opacity: 0;
+        filter: saturate(0.2) brightness(0.12) contrast(1.4);
+        box-shadow: 0 0 0 1px rgba(45, 217, 255, 0.06), 0 0 10px rgba(45, 217, 255, 0.05), var(--shadow);
+    }
+}
+
+@keyframes blueFireRise {
+    0% {
+        transform: translateY(20%) scaleY(0.48) scaleX(0.96);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    34% {
+        transform: translateY(0%) scaleY(0.98) scaleX(1);
+        opacity: 0.95;
+    }
+    58% {
+        transform: translateY(-14%) scaleY(1.18) scaleX(1.03);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-34%) scaleY(1.35) scaleX(1.06);
+        opacity: 0;
+    }
+}
+
+@keyframes blueFireFlash {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    12% {
+        opacity: 0.95;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.16);
+    }
 }
 
 
@@ -70,8 +258,8 @@ body {
     border-radius: 5px;
     width: 100%;
     box-sizing: border-box;
-    background: transparent;
-    color: #fff;
+    background: rgba(2, 10, 19, 0.55);
+    color: var(--text);
 }
 
 /* Estilos específicos para la barra de agregar */
@@ -80,20 +268,25 @@ body {
     padding: 10px 12px;
     border-radius: 8px;
     border: none;
-    background: rgba(255,255,255,0.02);
-    color: #fff;
+    background: rgba(1, 9, 16, 0.5);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px rgba(45, 217, 255, 0.16);
     outline: none;
 }
 
+.task-form input[type="text"]::placeholder {
+    color: rgba(183, 212, 234, 0.8);
+}
+
 .task-form button {
-    background: linear-gradient(90deg,#0d35fc,#063ef4);
-    color: #fff;
+    background: linear-gradient(90deg, var(--electric-deep), var(--electric));
+    color: #f5fbff;
     border: none;
     padding: 8px 14px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 18px rgba(15, 120, 209, 0.28), 0 0 18px rgba(45, 217, 255, 0.12);
 }
 
 .task-form .small-btn {
@@ -105,6 +298,7 @@ body {
     opacity: 0.95;
     transform: translateY(-1px);
     transition: all .12s ease;
+    box-shadow: 0 10px 22px rgba(15, 120, 209, 0.34), 0 0 22px rgba(45, 217, 255, 0.18);
 }
 
 .task-left {
@@ -119,40 +313,163 @@ body {
 }
 
 .complete-btn, .delete-btn {
-    background: linear-gradient(90deg,#0d35fc,#063ef4);
-    color: #fff;
+    background: linear-gradient(90deg, var(--electric-deep), var(--electric));
+    color: #f5fbff;
     border: none;
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 14px rgba(15, 120, 209, 0.22), 0 0 14px rgba(45, 217, 255, 0.10);
     font-size: 0.9em;
+    position: relative;
+    overflow: visible;
 }
 
 .complete-btn:hover, .delete-btn:hover {
     opacity: 0.95;
     transform: translateY(-1px);
     transition: all .12s ease;
+    box-shadow: 0 8px 16px rgba(15, 120, 209, 0.28), 0 0 18px rgba(45, 217, 255, 0.14);
 }
 
 .delete-btn {
-    background: linear-gradient(90deg,#fc0d0d,#f40606);
+    background: linear-gradient(90deg, #084a92, var(--electric));
+    box-shadow: 0 6px 14px rgba(15, 120, 209, 0.22), 0 0 14px rgba(45, 217, 255, 0.12);
+}
+
+.delete-btn:hover {
+    box-shadow: 0 8px 16px rgba(15, 120, 209, 0.30), 0 0 18px rgba(45, 217, 255, 0.18);
+}
+
+.task-item.deleting .delete-btn {
+    animation: deleteIgnite 0.9s ease forwards;
+}
+
+.task-item.deleting .delete-btn::before,
+.task-item.deleting .delete-btn::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    transform-origin: left center;
+    mix-blend-mode: screen;
+}
+
+.task-item.deleting .delete-btn::before {
+    width: 90px;
+    height: 74px;
+    margin-left: -58px;
+    background:
+        radial-gradient(circle at 12% 50%, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.62) 8%, rgba(180, 240, 255, 0.96) 16%, rgba(45, 217, 255, 0.95) 28%, rgba(45, 217, 255, 0.55) 44%, rgba(15, 120, 209, 0.18) 58%, transparent 72%),
+        radial-gradient(circle at 0% 50%, rgba(45, 217, 255, 0.9) 0%, rgba(45, 217, 255, 0.45) 14%, transparent 34%);
+    filter: blur(2px) saturate(1.5);
+    clip-path: polygon(0 50%, 16% 34%, 30% 16%, 44% 0, 58% 18%, 70% 10%, 82% 30%, 100% 50%, 84% 70%, 70% 90%, 52% 100%, 40% 82%, 24% 92%, 14% 74%);
+    animation: sideBlueFire 0.9s ease forwards;
+}
+
+.task-item.deleting .delete-btn::after {
+    width: 44px;
+    height: 44px;
+    margin-left: -28px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.95) 0%, rgba(45, 217, 255, 0.65) 30%, rgba(45, 217, 255, 0.20) 58%, transparent 72%),
+        radial-gradient(circle at 70% 60%, rgba(15, 120, 209, 0.55) 0%, transparent 58%);
+    box-shadow:
+        0 0 14px rgba(45, 217, 255, 0.55),
+        0 0 26px rgba(15, 120, 209, 0.38),
+        0 0 42px rgba(45, 217, 255, 0.22);
+    animation: sideBlueGlow 0.9s ease forwards;
+}
+
+@keyframes deleteIgnite {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    30% {
+        transform: scale(1.04);
+        filter: brightness(1.15) saturate(1.2);
+    }
+    60% {
+        transform: scale(0.98);
+        filter: brightness(0.92) saturate(1.1);
+    }
+    100% {
+        transform: scale(0.9);
+        filter: brightness(0.55) saturate(0.6);
+        opacity: 0.2;
+    }
+}
+
+@keyframes sideBlueFire {
+    0% {
+        transform: translateY(-50%) translateX(10px) scaleX(0.18) scaleY(0.2) rotate(-6deg);
+        opacity: 0;
+    }
+    18% {
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-54%) translateX(-28px) scaleX(1.08) scaleY(0.92) rotate(-2deg);
+        opacity: 0.95;
+    }
+    100% {
+        transform: translateY(-60%) translateX(-70px) scaleX(1.5) scaleY(1.18) rotate(2deg);
+        opacity: 0;
+    }
+}
+
+@keyframes sideBlueGlow {
+    0% {
+        transform: translateY(-50%) translateX(-2px) scale(0.35);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-58%) translateX(-42px) scale(1.65);
+        opacity: 0;
+    }
+}
+
+@keyframes emberDrift {
+    0% {
+        background-position: 50% 92%, 0 0, 66% 66%, 52% 54%, 40% 74%;
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.9;
+    }
+    55% {
+        background-position: 48% 88%, 0 0, 58% 56%, 44% 44%, 31% 64%;
+        opacity: 0.72;
+    }
+    100% {
+        background-position: 46% 82%, 0 0, 50% 44%, 36% 31%, 22% 50%;
+        opacity: 0;
+    }
 }
 
 .task-stats {
     display: flex;
     gap: 12px;
-    background: rgba(255,255,255,0.06);
+    background: var(--panel-strong);
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 20px;
     align-items: center;
+    border: 1px solid rgba(45, 217, 255, 0.14);
+    box-shadow: var(--shadow);
 }
 
 .task-stats p {
     margin: 0;
-    color: #e8f6f7;
+    color: var(--muted);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -160,11 +477,12 @@ body {
 }
 
 .task-stats span {
-    background: rgba(0,0,0,0.25);
+    background: linear-gradient(90deg, rgba(15, 120, 209, 0.65), rgba(45, 217, 255, 0.65));
     padding: 4px 10px;
     border-radius: 999px;
-    color: #fff;
+    color: var(--text);
     font-weight: 700;
     min-width: 30px;
     text-align: center;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
