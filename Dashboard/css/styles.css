@@ -251,6 +251,37 @@ body::after {
     }
 }
 
+.task-item.entering {
+    animation: task-enter 260ms ease-out;
+}
+
+.task-item.removing {
+    animation: task-remove 220ms ease-in forwards;
+}
+
+@keyframes task-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes task-remove {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(14px) scale(0.96);
+    }
+}
+}
+
 
 .input, input[type="text"], textarea, select  {
     padding: 10px;
@@ -453,6 +484,20 @@ body::after {
         background-position: 46% 82%, 0 0, 50% 44%, 36% 31%, 22% 50%;
         opacity: 0;
     }
+}
+
+.pin-btn {
+    background: linear-gradient(90deg, #9c27b0, #6a1b9a);
+}
+
+.pin-btn.pinned {
+    background: linear-gradient(90deg, #ffc107, #ff9800);
+    font-weight: bold;
+}
+
+.pinned-task {
+    border-left: 4px solid #ffc107;
+    background: rgba(255, 193, 7, 0.08);
 }
 
 .task-stats {

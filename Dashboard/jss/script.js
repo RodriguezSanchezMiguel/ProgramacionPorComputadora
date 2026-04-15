@@ -13,16 +13,19 @@ const completedEl = document.getElementById('completedtasks');
 const pendingEl = document.getElementById('pendingtasks');
 
 let tasks = loadTasks();
+let enteringTaskId = null;
+let isDeletingTask = false;
 
 function loadTasks() {
 	try {
 		const raw = localStorage.getItem(TASKS_KEY);
 		let tasks = raw ? JSON.parse(raw) : [];
-		// Ensure all tasks have completed property
+		// Ensure all tasks have completed and pinned property
 		tasks = tasks.map(task => ({
 			id: task.id,
 			text: task.text,
-			completed: task.completed || false
+			completed: task.completed || false,
+			pinned: task.pinned || false
 		}));
 		return tasks;
 	} catch (e) {
@@ -47,14 +50,19 @@ function renderTasks() {
 	const pendingTasks = tasks.filter(t => !t.completed);
 	const completedTasks = tasks.filter(t => t.completed);
 
-	// Render pending
+	// Separar tareas fijadas de no fijadas
+	const pinnedPending = pendingTasks.filter(t => t.pinned);
+	const unpinnedPending = pendingTasks.filter(t => !t.pinned);
+
+	// Render pending (fijadas primero)
 	if (pendingTasks.length === 0) {
 		const empty = document.createElement('p');
 		empty.textContent = 'No hay tareas pendientes.';
 		empty.style.opacity = '0.8';
 		pendingList.appendChild(empty);
 	} else {
-		pendingTasks.forEach(task => renderTaskItem(task, pendingList));
+		pinnedPending.forEach(task => renderTaskItem(task, pendingList));
+		unpinnedPending.forEach(task => renderTaskItem(task, pendingList));
 	}
 
 	// Render completed
@@ -75,6 +83,15 @@ function renderTaskItem(task, listEl) {
 	item.className = 'task-item';
 	item.dataset.id = task.id;
 
+	if (task.pinned) item.classList.add('pinned-task');
+	
+	if (task.id === enteringTaskId) {
+		item.classList.add('entering');
+		item.addEventListener('animationend', () => {
+			item.classList.remove('entering');
+		}, { once: true });
+	}
+
 	const left = document.createElement('div');
 	left.className = 'task-left';
 
@@ -91,12 +108,19 @@ function renderTaskItem(task, listEl) {
 	completeBtn.className = 'complete-btn';
 	completeBtn.dataset.id = task.id;
 
+	const pinBtn = document.createElement('button');
+	pinBtn.textContent = task.pinned ? '📌 Fijado' : '📌 Fijar';
+	pinBtn.className = 'pin-btn';
+	pinBtn.dataset.id = task.id;
+	if (task.pinned) pinBtn.classList.add('pinned');
+
 	const deleteBtn = document.createElement('button');
 	deleteBtn.textContent = 'Borrar';
 	deleteBtn.className = 'delete-btn';
 	deleteBtn.dataset.id = task.id;
 
 	buttons.appendChild(completeBtn);
+	buttons.appendChild(pinBtn);
 	buttons.appendChild(deleteBtn);
 
 	item.appendChild(left);
@@ -126,10 +150,26 @@ function addTask() {
 	};
 
 	tasks.unshift(task);
+	enteringTaskId = task.id;
 	saveTasks();
 	renderTasks();
+	enteringTaskId = null;
 	taskInput.value = '';
 	taskInput.focus();
+}
+
+function deleteTaskWithAnimation(id, itemEl) {
+	if (!itemEl || isDeletingTask) return;
+
+	isDeletingTask = true;
+	itemEl.classList.add('removing');
+
+	itemEl.addEventListener('animationend', () => {
+		tasks = tasks.filter(t => t.id !== id);
+		saveTasks();
+		renderTasks();
+		isDeletingTask = false;
+	}, { once: true });
 }
 
 function sortTasks(direction) {
@@ -153,6 +193,13 @@ function handleTaskAction(e) {
 		const task = tasks.find(t => t.id === id);
 		if (task) {
 			task.completed = !task.completed;
+			saveTasks();
+			renderTasks();
+		}
+	} else if (btn.classList.contains('pin-btn')) {
+		const task = tasks.find(t => t.id === id);
+		if (task) {
+			task.pinned = !task.pinned;
 			saveTasks();
 			renderTasks();
 		}
