@@ -132,6 +132,7 @@ body::after {
     overflow: hidden;
 }
 
+<<<<<<< HEAD
 .task-item.entering {
     animation: task-enter 260ms ease-out;
 }
@@ -147,6 +148,8 @@ body::after {
     }
 }
 
+=======
+>>>>>>> fa40c34f73afae5a2b488e231fc8a8b679440ad0
 .task-item:hover {
     border-color: rgba(45, 217, 255, 0.34);
     box-shadow:
@@ -264,6 +267,40 @@ body::after {
         opacity: 0;
         transform: scale(1.16);
     }
+<<<<<<< HEAD
+=======
+}
+
+.task-item.entering {
+    animation: task-enter 260ms ease-out;
+}
+
+.task-item.removing {
+    animation: task-remove 220ms ease-in forwards;
+}
+
+@keyframes task-enter {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes task-remove {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(14px) scale(0.96);
+    }
+}
+>>>>>>> fa40c34f73afae5a2b488e231fc8a8b679440ad0
 }
 
 
