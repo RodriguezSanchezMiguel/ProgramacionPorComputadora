@@ -1,5 +1,6 @@
 // script.js - maneja tareas: añadir, borrar, marcar completadas y persistencia en localStorage
 const TASKS_KEY = 'tasks_v1';
+const DELETE_ANIMATION_MS = 920;
 
 const taskInput = document.getElementById('taskinput');
 const addTaskBtn = document.getElementById('addtaskbtn');
@@ -13,7 +14,6 @@ const pendingEl = document.getElementById('pendingtasks');
 
 let tasks = loadTasks();
 let enteringTaskId = null;
-let isDeletingTask = false;
 
 function loadTasks() {
 	try {
@@ -145,7 +145,8 @@ function addTask() {
 	const task = {
 		id: Date.now().toString(),
 		text,
-		completed: false
+		completed: false,
+		pinned: false
 	};
 
 	tasks.unshift(task);
@@ -156,21 +157,6 @@ function addTask() {
 	taskInput.value = '';
 	taskInput.focus();
 }
-
-function deleteTaskWithAnimation(id, itemEl) {
-	if (!itemEl || isDeletingTask) return;
-
-	isDeletingTask = true;
-	itemEl.classList.add('removing');
-
-	itemEl.addEventListener('animationend', () => {
-		tasks = tasks.filter(t => t.id !== id);
-		saveTasks();
-		renderTasks();
-		isDeletingTask = false;
-	}, { once: true });
-}
-
 function sortTasks(direction) {
 	if (direction === 'az') {
 		tasks.sort((a, b) => a.text.localeCompare(b.text, 'es', { sensitivity: 'base' }));
@@ -203,8 +189,19 @@ function handleTaskAction(e) {
 			renderTasks();
 		}
 	} else if (btn.classList.contains('delete-btn')) {
-		const taskItem = btn.closest('.task-item');
-		deleteTaskWithAnimation(id, taskItem);
+		const item = btn.closest('.task-item');
+		if (!item || item.classList.contains('deleting')) return;
+
+		item.classList.add('deleting');
+		item.querySelectorAll('button').forEach(button => {
+			button.disabled = true;
+		});
+
+		window.setTimeout(() => {
+			tasks = tasks.filter(t => t.id !== id);
+			saveTasks();
+			renderTasks();
+		}, DELETE_ANIMATION_MS);
 	}
 }
 
